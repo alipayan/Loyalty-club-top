@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../../src/BuildingBlocks/CustomerClub.BuildingBlocks.Api/CustomerClub.BuildingBlocks.Api.csproj" />
+    <ProjectReference Include="../../../../src/BuildingBlocks/CustomerClub.BuildingBlocks.ServiceDefaults/CustomerClub.BuildingBlocks.ServiceDefaults.csproj" />
+    <ProjectReference Include="../CustomerClub.ServiceTemplate.Application/CustomerClub.ServiceTemplate.Application.csproj" />
+    <ProjectReference Include="../CustomerClub.ServiceTemplate.Contracts/CustomerClub.ServiceTemplate.Contracts.csproj" />
+  </ItemGroup>
+</Project>

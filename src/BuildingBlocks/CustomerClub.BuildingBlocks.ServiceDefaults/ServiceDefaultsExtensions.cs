@@ -1,0 +1,47 @@
+using CustomerClub.BuildingBlocks.Observability;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+namespace CustomerClub.BuildingBlocks.ServiceDefaults;
+
+public static class ServiceDefaultsExtensions
+{
+    public static IServiceCollection AddCustomerClubServiceDefaults(this IServiceCollection services, string serviceName)
+    {
+        services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        });
+
+        services.AddHttpContextAccessor();
+        services.AddSingleton(new ServiceIdentity(serviceName));
+
+        return services;
+    }
+
+    public static WebApplication UseCustomerClubDefaultPipeline(this WebApplication app)
+    {
+        app.UseExceptionHandler();
+        app.Use(async (context, next) =>
+        {
+            if (!context.Request.Headers.ContainsKey(ObservabilityConventions.CorrelationHeader))
+            {
+                context.Request.Headers.Append(ObservabilityConventions.CorrelationHeader, context.TraceIdentifier);
+            }
+
+            await next();
+        });
+
+        app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("live")
+        });
+        app.MapHealthChecks("/health/ready");
+
+        return app;
+    }
+}
+
+public sealed record ServiceIdentity(string Name);
