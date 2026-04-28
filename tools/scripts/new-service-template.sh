@@ -66,9 +66,23 @@ if [[ ! -f "$TARGET_SOLUTION_PATH" ]]; then
   dotnet new sln -n "$(basename "$TARGET_SOLUTION_PATH" .sln)" -o "$(dirname "$TARGET_SOLUTION_PATH")" >/dev/null
 fi
 
-while IFS= read -r -d '' csproj; do
+mapfile -t CSPROJ_FILES < <(find "$TARGET_DIR" -type f -name '*.csproj' | sort)
+
+if [[ ${#CSPROJ_FILES[@]} -eq 0 ]]; then
+  echo "No .csproj files were found under $TARGET_DIR. Nothing was added to the solution."
+  exit 1
+fi
+
+for csproj in "${CSPROJ_FILES[@]}"; do
   dotnet sln "$TARGET_SOLUTION_PATH" add "$csproj" >/dev/null
-done < <(find "$TARGET_DIR" -type f -name '*.csproj' -print0 | sort -z)
+done
+
+PROJECT_COUNT="$(dotnet sln "$TARGET_SOLUTION_PATH" list | awk '/\.csproj$/ { count++ } END { print count + 0 }')"
+if [[ "$PROJECT_COUNT" -eq 0 ]]; then
+  echo "Solution was created at $TARGET_SOLUTION_PATH, but it does not contain any projects."
+  echo "Please check your dotnet SDK and path compatibility, then retry."
+  exit 1
+fi
 
 echo "Service scaffold created at: $TARGET_DIR"
 echo "Solution updated at: $TARGET_SOLUTION_PATH"
