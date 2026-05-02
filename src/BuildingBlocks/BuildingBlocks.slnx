@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="CustomerClub.BuildingBlocks.Api/CustomerClub.BuildingBlocks.Api.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Contracts/CustomerClub.BuildingBlocks.Contracts.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Messaging/CustomerClub.BuildingBlocks.Messaging.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Observability/CustomerClub.BuildingBlocks.Observability.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Persistence/CustomerClub.BuildingBlocks.Persistence.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Security/CustomerClub.BuildingBlocks.Security.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.ServiceDefaults/CustomerClub.BuildingBlocks.ServiceDefaults.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Testing/CustomerClub.BuildingBlocks.Testing.csproj" />
+</Solution>
