@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace CustomerClub.ServiceTemplate.Application;
 
 public static class DependencyInjection

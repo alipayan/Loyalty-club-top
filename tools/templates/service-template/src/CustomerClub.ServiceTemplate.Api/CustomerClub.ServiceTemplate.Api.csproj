@@ -5,9 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../../src/BuildingBlocks/CustomerClub.BuildingBlocks.Api/CustomerClub.BuildingBlocks.Api.csproj" />
-    <ProjectReference Include="../../../../src/BuildingBlocks/CustomerClub.BuildingBlocks.ServiceDefaults/CustomerClub.BuildingBlocks.ServiceDefaults.csproj" />
-    <ProjectReference Include="../CustomerClub.ServiceTemplate.Application/CustomerClub.ServiceTemplate.Application.csproj" />
-    <ProjectReference Include="../CustomerClub.ServiceTemplate.Contracts/CustomerClub.ServiceTemplate.Contracts.csproj" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Api" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Contracts" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Messaging" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Observability" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Persistence" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Security" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.ServiceDefaults" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Testing" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CustomerClub.ServiceTemplate.Application\CustomerClub.ServiceTemplate.Application.csproj" />
+    <ProjectReference Include="..\CustomerClub.ServiceTemplate.Infrastructure\CustomerClub.ServiceTemplate.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

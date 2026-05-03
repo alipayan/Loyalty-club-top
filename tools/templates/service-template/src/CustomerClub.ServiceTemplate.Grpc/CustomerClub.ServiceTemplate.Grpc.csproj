@@ -14,4 +14,9 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CustomerClub.ServiceTemplate.Application\CustomerClub.ServiceTemplate.Application.csproj" />
+    <ProjectReference Include="..\CustomerClub.ServiceTemplate.Infrastructure\CustomerClub.ServiceTemplate.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

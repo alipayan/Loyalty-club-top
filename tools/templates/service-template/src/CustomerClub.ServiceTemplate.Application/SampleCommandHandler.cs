@@ -4,7 +4,7 @@ namespace CustomerClub.ServiceTemplate.Application;
 
 public sealed class SampleCommandHandler
 {
-    public Task<IResult> HandleAsync(CreateSampleCommand command, CancellationToken cancellationToken)
+    public Task HandleAsync(CreateSampleCommand command, CancellationToken cancellationToken)
     {
         var @event = new SampleCreatedV1(
             EventId: Guid.NewGuid(),
@@ -17,6 +17,6 @@ public sealed class SampleCommandHandler
             TenantOrClubId: null,
             Name: command.Name);
 
-        return Task.FromResult(Results.Accepted($"/api/sample/{@event.EventId}", @event));
+        return Task.CompletedTask;
     }
 }
