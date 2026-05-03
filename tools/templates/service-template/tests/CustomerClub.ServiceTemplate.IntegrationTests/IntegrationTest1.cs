@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace CustomerClub.ServiceTemplate.IntegrationTests;
 
 public class IntegrationTest1

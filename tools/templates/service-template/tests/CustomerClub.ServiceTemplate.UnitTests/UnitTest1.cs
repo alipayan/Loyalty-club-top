@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace CustomerClub.ServiceTemplate.UnitTests;
 
 public class UnitTest1

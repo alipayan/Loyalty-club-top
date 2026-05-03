@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace CustomerClub.ServiceTemplate.ContractTests;
 
 public class ContractTest1

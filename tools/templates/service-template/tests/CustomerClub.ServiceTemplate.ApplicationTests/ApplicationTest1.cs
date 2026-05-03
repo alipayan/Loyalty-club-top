@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace CustomerClub.ServiceTemplate.ApplicationTests;
 
 public class ApplicationTest1
