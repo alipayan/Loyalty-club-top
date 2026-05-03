@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CustomerClub.PointGenerator.Api/CustomerClub.PointGenerator.Api.csproj" />
+    <Project Path="src/CustomerClub.PointGenerator.Application/CustomerClub.PointGenerator.Application.csproj" />
+    <Project Path="src/CustomerClub.PointGenerator.Contracts/CustomerClub.PointGenerator.Contracts.csproj" />
+    <Project Path="src/CustomerClub.PointGenerator.Domain/CustomerClub.PointGenerator.Domain.csproj" />
+    <Project Path="src/CustomerClub.PointGenerator.Grpc/CustomerClub.PointGenerator.Grpc.csproj" />
+    <Project Path="src/CustomerClub.PointGenerator.Infrastructure/CustomerClub.PointGenerator.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CustomerClub.PointGenerator.ApplicationTests/CustomerClub.PointGenerator.ApplicationTests.csproj" />
+    <Project Path="tests/CustomerClub.PointGenerator.ContractTests/CustomerClub.PointGenerator.ContractTests.csproj" />
+    <Project Path="tests/CustomerClub.PointGenerator.IntegrationTests/CustomerClub.PointGenerator.IntegrationTests.csproj" />
+    <Project Path="tests/CustomerClub.PointGenerator.UnitTests/CustomerClub.PointGenerator.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="SolutionItems/.github-workflow-ci.yml" />
+    <File Path="SolutionItems/ADR-LINKS.md" />
+    <File Path="SolutionItems/README.md" />
+  </Folder>
+</Solution>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CustomerClub.BuildingBlocks.Api" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Contracts" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Messaging" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Observability" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Persistence" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Security" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.ServiceDefaults" Version="1.0.0" />
+    <PackageReference Include="CustomerClub.BuildingBlocks.Testing" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CustomerClub.PointGenerator.Application\CustomerClub.PointGenerator.Application.csproj" />
+    <ProjectReference Include="..\CustomerClub.PointGenerator.Infrastructure\CustomerClub.PointGenerator.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
