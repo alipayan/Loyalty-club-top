@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="CustomerClub.BuildingBlocks.Api/CustomerClub.BuildingBlocks.Api.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Application/CustomerClub.BuildingBlocks.Application.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Contracts/CustomerClub.BuildingBlocks.Contracts.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Messaging/CustomerClub.BuildingBlocks.Messaging.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Observability/CustomerClub.BuildingBlocks.Observability.csproj" />
