@@ -15,7 +15,7 @@ public static class ServiceDefaultsExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
 
         services.ConfigureHttpJsonOptions(options =>
-        {`
+        {
             options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         });
 
