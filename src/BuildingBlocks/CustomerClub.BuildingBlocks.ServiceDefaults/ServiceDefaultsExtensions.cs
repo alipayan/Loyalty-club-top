@@ -1,5 +1,6 @@
 using CustomerClub.BuildingBlocks.Observability;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -14,7 +15,7 @@ public static class ServiceDefaultsExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
 
         services.ConfigureHttpJsonOptions(options =>
-        {
+        {`
             options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         });
 
@@ -26,21 +27,23 @@ public static class ServiceDefaultsExtensions
 
     public static WebApplication UseCustomerClubDefaultPipeline(this WebApplication app)
     {
-        app.UseExceptionHandler();
         app.Use(async (context, next) =>
         {
             if (!context.Request.Headers.ContainsKey(ObservabilityConventions.CorrelationHeader))
             {
-                context.Request.Headers.Append(ObservabilityConventions.CorrelationHeader, context.TraceIdentifier);
+                context.Request.Headers.Append(
+                    ObservabilityConventions.CorrelationHeader,
+                    context.TraceIdentifier);
             }
 
             await next();
         });
 
-        app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
             Predicate = check => check.Tags.Contains("live")
         });
+
         app.MapHealthChecks("/health/ready");
 
         return app;
