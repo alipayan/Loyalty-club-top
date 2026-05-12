@@ -43,7 +43,7 @@ public static class ApiServiceCollectionExtensions
                 problemDetails.WithStandardExtensions(
                     context.HttpContext,
                     apiOptions.ServiceName,
-                    "request.validation_failed");
+                    "validation.failed");
 
                 return new BadRequestObjectResult(problemDetails);
             };

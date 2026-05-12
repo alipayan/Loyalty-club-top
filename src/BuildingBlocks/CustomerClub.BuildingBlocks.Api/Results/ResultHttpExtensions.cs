@@ -82,7 +82,7 @@ public static class ResultHttpExtensions
 
         if (result.ValidationErrors.Count > 0)
         {
-            problemDetails.Extensions[ProblemDetailsDefaults.ErrorsKey] =
+            problemDetails.Extensions["errors"] =
                 result.ValidationErrors.Select(error => new
                 {
                     field = error.PropertyName,

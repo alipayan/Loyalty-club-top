@@ -1,50 +1,83 @@
-using CustomerClub.BuildingBlocks.Observability;
+using CustomerClub.BuildingBlocks.ServiceDefaults.Configuration;
+using CustomerClub.BuildingBlocks.ServiceDefaults.Correlation;
+using CustomerClub.BuildingBlocks.ServiceDefaults.Health;
+using CustomerClub.BuildingBlocks.ServiceDefaults.Identity;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CustomerClub.BuildingBlocks.ServiceDefaults;
 
 public static class ServiceDefaultsExtensions
 {
-    public static IServiceCollection AddCustomerClubServiceDefaults(this IServiceCollection services, string serviceName)
+    public static IServiceCollection AddCustomerClubServiceDefaults(
+        this IServiceCollection services,
+        string serviceName)
     {
-        services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"]);
-
-        services.ConfigureHttpJsonOptions(options =>
+        return services.AddCustomerClubServiceDefaults(options =>
         {
-            options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+            options.ServiceName = serviceName;
         });
+    }
 
-        services.AddHttpContextAccessor();
-        services.AddSingleton(new ServiceIdentity(serviceName));
+    public static IServiceCollection AddCustomerClubServiceDefaults(
+        this IServiceCollection services,
+        Action<ServiceDefaultsOptions> configureOptions)
+    {
+        var options = new ServiceDefaultsOptions();
+        configureOptions(options);
+
+        services.AddSingleton(options);
+        services.AddSingleton(new ServiceIdentity(options.ServiceName));
+
+        if (options.EnableHealthChecks)
+        {
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy(), tags: [HealthCheckTags.Live]);
+        }
+
+        if (options.EnableJsonDefaults)
+        {
+            services.ConfigureHttpJsonOptions(jsonOptions =>
+            {
+                jsonOptions.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                jsonOptions.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
+        }
+
+        if (options.EnableHttpContextAccessor)
+        {
+            services.AddHttpContextAccessor();
+        }
 
         return services;
     }
 
     public static WebApplication UseCustomerClubDefaultPipeline(this WebApplication app)
     {
-        app.UseExceptionHandler();
-        app.Use(async (context, next) =>
+        var options = app.Services.GetRequiredService<ServiceDefaultsOptions>();
+
+        if (options.EnableCorrelation)
         {
-            if (!context.Request.Headers.ContainsKey(ObservabilityConventions.CorrelationHeader))
+            app.UseMiddleware<CorrelationMiddleware>();
+        }
+
+        if (options.EnableHealthChecks)
+        {
+            app.MapHealthChecks("/health/live", new HealthCheckOptions
             {
-                context.Request.Headers.Append(ObservabilityConventions.CorrelationHeader, context.TraceIdentifier);
-            }
+                Predicate = check => check.Tags.Contains(HealthCheckTags.Live)
+            });
 
-            await next();
-        });
-
-        app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-        {
-            Predicate = check => check.Tags.Contains("live")
-        });
-        app.MapHealthChecks("/health/ready");
+            app.MapHealthChecks("/health/ready", new HealthCheckOptions
+            {
+                Predicate = check => check.Tags.Contains(HealthCheckTags.Ready) || !check.Tags.Any()
+            });
+        }
 
         return app;
     }
 }
-
-public sealed record ServiceIdentity(string Name);
