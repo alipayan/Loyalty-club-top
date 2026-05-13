@@ -54,8 +54,6 @@ public static class OutboxModelBuilderExtensions
 
         entity.HasIndex(message => message.CorrelationId);
 
-        entity.HasIndex(message => message.ProcessingExpiresOn);
-
         entity.HasIndex(message => new
         {
             message.EventType,
