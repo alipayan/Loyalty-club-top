@@ -1,0 +1,118 @@
+﻿namespace CustomerClub.BuildingBlocks.Persistence.EfCore.Outbox;
+
+public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutboxStore
+    where TDbContext : DbContext
+{
+    private DbSet<OutboxMessage> OutboxMessages => dbContext.Set<OutboxMessage>();
+
+    public async Task<OutboxMessage> AddAsync(
+        OutboxMessage message,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        await OutboxMessages.AddAsync(message, cancellationToken);
+
+        return message;
+    }
+
+    public async Task<IReadOnlyList<OutboxMessage>> GetPublishableAsync(
+        int batchSize,
+        DateTimeOffset nowUtc,
+        int maxRetryCount,
+        CancellationToken cancellationToken = default)
+    {
+        if (batchSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be greater than zero.");
+
+        return await OutboxMessages
+            .AsNoTracking()
+            .Where(message =>
+                message.RetryCount < maxRetryCount &&
+                (
+                    message.Status == OutboxMessageStatus.Pending ||
+                    message.Status == OutboxMessageStatus.Failed ||
+                    (
+                        message.Status == OutboxMessageStatus.Processing &&
+                        message.ProcessingExpiresOn != null &&
+                        message.ProcessingExpiresOn < nowUtc
+                    )
+                ))
+            .OrderBy(message => message.OccurredOn)
+            .Take(batchSize)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<bool> TryMarkAsProcessingAsync(
+        Guid messageId,
+        DateTimeOffset startedOn,
+        DateTimeOffset expiresOn,
+        CancellationToken cancellationToken = default)
+    {
+        var affectedRows = await OutboxMessages
+            .Where(message =>
+                message.Id == messageId &&
+                (
+                    message.Status == OutboxMessageStatus.Pending ||
+                    message.Status == OutboxMessageStatus.Failed ||
+                    (
+                        message.Status == OutboxMessageStatus.Processing &&
+                        message.ProcessingExpiresOn != null &&
+                        message.ProcessingExpiresOn < startedOn
+                    )
+                ))
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(message => message.Status, OutboxMessageStatus.Processing)
+                .SetProperty(message => message.LastAttemptOn, startedOn)
+                .SetProperty(message => message.ProcessingStartedOn, startedOn)
+                .SetProperty(message => message.ProcessingExpiresOn, expiresOn)
+                .SetProperty(message => message.RetryCount, message => message.RetryCount + 1),
+                cancellationToken);
+
+        return affectedRows == 1;
+    }
+
+    public async Task MarkAsPublishedAsync(
+        Guid messageId,
+        DateTimeOffset publishedOnUtc,
+        CancellationToken cancellationToken = default)
+    {
+        await OutboxMessages
+            .Where(message => message.Id == messageId)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(message => message.Status, OutboxMessageStatus.Published)
+                .SetProperty(message => message.PublishedOn, publishedOnUtc)
+                .SetProperty(message => message.LastError, (string?)null)
+                .SetProperty(message => message.ProcessingStartedOn, (DateTimeOffset?)null)
+                .SetProperty(message => message.ProcessingExpiresOn, (DateTimeOffset?)null),
+                cancellationToken);
+    }
+
+    public async Task MarkAsFailedAsync(
+        Guid messageId,
+        string error,
+        DateTimeOffset failedOn,
+        int maxRetryCount,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(error))
+            error = "Unknown outbox publishing error.";
+
+        var message = await OutboxMessages
+            .FirstOrDefaultAsync(message => message.Id == messageId, cancellationToken);
+
+        if (message is null)
+            return;
+
+        message.LastError = error;
+        message.LastAttemptOn = failedOn;
+        message.ProcessingStartedOn = null;
+        message.ProcessingExpiresOn = null;
+
+        message.Status = message.RetryCount >= maxRetryCount
+            ? OutboxMessageStatus.DeadLettered
+            : OutboxMessageStatus.Failed;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+}
