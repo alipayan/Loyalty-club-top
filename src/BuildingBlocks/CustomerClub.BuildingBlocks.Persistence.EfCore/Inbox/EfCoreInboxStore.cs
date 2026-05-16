@@ -6,7 +6,7 @@ public sealed class EfCoreInboxStore<TDbContext>(TDbContext dbContext) : IInboxS
     private DbSet<InboxMessage> InboxMessages => dbContext.Set<InboxMessage>();
 
     public async Task<bool> HasProcessedAsync(
-        Guid eventId,
+        string eventId,
         string consumer,
         CancellationToken cancellationToken = default)
     {

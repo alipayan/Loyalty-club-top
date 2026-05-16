@@ -24,10 +24,6 @@ public static class OutboxModelBuilderExtensions
         entity.Property(message => message.Payload)
             .IsRequired();
 
-        entity.Property(message => message.ContentType)
-            .HasMaxLength(100)
-            .IsRequired();
-
         entity.Property(message => message.Producer)
             .HasMaxLength(200)
             .IsRequired();

@@ -21,9 +21,6 @@ public static class InboxModelBuilderExtensions
             .HasMaxLength(200)
             .IsRequired();
 
-        entity.Property(message => message.CorrelationId)
-            .HasMaxLength(100);
-
         entity.HasIndex(message => new
         {
             message.EventId,
