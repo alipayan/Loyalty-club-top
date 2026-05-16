@@ -30,6 +30,4 @@ public sealed class OutboxMessage
 
     public OutboxMessageStatus Status { get; set; } = OutboxMessageStatus.Pending;
 
-    public DateTimeOffset? LastAttemptOn { get; set; }
-
 }
