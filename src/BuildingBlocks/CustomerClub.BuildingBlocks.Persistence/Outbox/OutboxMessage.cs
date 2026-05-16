@@ -26,6 +26,8 @@ public sealed class OutboxMessage
 
     public string? LastError { get; set; }
 
+    public DateTimeOffset? LastAttemptOn { get; set; }
+
     public OutboxMessageStatus Status { get; set; } = OutboxMessageStatus.Pending;
 
     public DateTimeOffset? LastAttemptOn { get; set; }

@@ -8,7 +8,7 @@
 		<PackageId>CustomerClub.BuildingBlocks.Persistence.EfCore</PackageId>
 		<Version>1.0.0</Version>
 	</PropertyGroup>
-
+ 
 	<ItemGroup>
 		<ProjectReference Include="..\CustomerClub.BuildingBlocks.Persistence\CustomerClub.BuildingBlocks.Persistence.csproj" />
 	</ItemGroup>
@@ -18,6 +18,10 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
+	</ItemGroup>
+ 
+	<ItemGroup>
+	  <ProjectReference Include="..\CustomerClub.BuildingBlocks.Persistence\CustomerClub.BuildingBlocks.Persistence.csproj" />
 	</ItemGroup>
 
 </Project>
