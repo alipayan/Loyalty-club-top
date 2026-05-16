@@ -142,25 +142,6 @@ The bridge between these two belongs to an Outbox Publisher Worker or service-sp
 
 ---
 
-### Relationship with `CustomerClub.BuildingBlocks.Application`
-
-`Application` owns use-case outcomes such as `Result` and `Error`.
-
-`Persistence.EfCore` must not depend on application result modeling.
-
-Not allowed:
-
-```text
-Persistence.EfCore
-  -> Result
-  -> Error
-  -> ErrorType
-```
-
-Persistence concerns and application outcomes must stay separate.
-
----
-
 ## Main components
 
 ### 1. `EfCoreOutboxStore<TDbContext>`
