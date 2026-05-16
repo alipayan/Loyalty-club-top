@@ -4,6 +4,7 @@
   <Project Path="CustomerClub.BuildingBlocks.Contracts/CustomerClub.BuildingBlocks.Contracts.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Messaging/CustomerClub.BuildingBlocks.Messaging.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Observability/CustomerClub.BuildingBlocks.Observability.csproj" />
+  <Project Path="CustomerClub.BuildingBlocks.Persistence.EfCore/CustomerClub.BuildingBlocks.Persistence.EfCore.csproj" Id="5e426d22-6d09-4826-98be-ebfaa4a15232" />
   <Project Path="CustomerClub.BuildingBlocks.Persistence/CustomerClub.BuildingBlocks.Persistence.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.Security/CustomerClub.BuildingBlocks.Security.csproj" />
   <Project Path="CustomerClub.BuildingBlocks.ServiceDefaults/CustomerClub.BuildingBlocks.ServiceDefaults.csproj" />

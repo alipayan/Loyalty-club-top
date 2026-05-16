@@ -10,6 +10,8 @@ public sealed class OutboxMessage
 
     public required string Payload { get; set; }
 
+    public required string ContentType { get; set; } = "application/json";
+
     public required string Producer { get; set; }
 
     public DateTimeOffset OccurredOn { get; set; }
@@ -25,4 +27,7 @@ public sealed class OutboxMessage
     public string? LastError { get; set; }
 
     public OutboxMessageStatus Status { get; set; } = OutboxMessageStatus.Pending;
+
+    public DateTimeOffset? LastAttemptOn { get; set; }
+
 }

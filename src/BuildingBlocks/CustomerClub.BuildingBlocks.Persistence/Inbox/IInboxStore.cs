@@ -3,11 +3,15 @@
 public interface IInboxStore
 {
     Task<bool> HasProcessedAsync(
-        string eventId,
+        Guid eventId,
         string consumer,
         CancellationToken cancellationToken = default);
 
     Task MarkAsProcessedAsync(
+        InboxMessage message,
+        CancellationToken cancellationToken = default);
+
+    Task<InboxMessage> AddAsync(
         InboxMessage message,
         CancellationToken cancellationToken = default);
 }
