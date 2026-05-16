@@ -56,14 +56,14 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
 
     public async Task MarkAsPublishedAsync(
         Guid messageId,
-        DateTimeOffset publishedOnUtc,
+        DateTimeOffset publishedOn,
         CancellationToken cancellationToken = default)
     {
         await OutboxMessages
             .Where(message => message.Id == messageId)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(message => message.Status, OutboxMessageStatus.Published)
-                .SetProperty(message => message.PublishedOn, publishedOnUtc)
+                .SetProperty(message => message.PublishedOn, publishedOn)
                 .SetProperty(message => message.LastError, (string?)null),
                 cancellationToken);
     }

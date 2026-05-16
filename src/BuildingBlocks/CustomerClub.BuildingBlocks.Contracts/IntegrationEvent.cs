@@ -4,7 +4,7 @@ public abstract record IntegrationEvent(
     Guid EventId,
     string EventType,
     string EventVersion,
-    DateTimeOffset OccurredOnUtc,
+    DateTimeOffset OccurredOn,
     string? CorrelationId,
     string? CausationId,
     string Producer,

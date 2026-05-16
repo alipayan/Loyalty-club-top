@@ -16,7 +16,7 @@ public interface IOutboxStore
 
     Task MarkAsPublishedAsync(
         Guid messageId,
-        DateTimeOffset publishedOnUtc,
+        DateTimeOffset publishedOn,
         CancellationToken cancellationToken = default);
 
     Task MarkAsFailedAsync(
