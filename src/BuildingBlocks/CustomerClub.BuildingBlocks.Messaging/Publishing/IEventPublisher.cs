@@ -8,4 +8,11 @@ public interface IEventPublisher
         EventEnvelope<TPayload> envelope,
         PublishOptions? options = null,
         CancellationToken cancellationToken = default);
+
+    Task<PublishResult> PublishRawAsync(
+        EventMetadata metadata,
+        string payload,
+        string contentType,
+        PublishOptions? options = null,
+        CancellationToken cancellationToken = default);
 }

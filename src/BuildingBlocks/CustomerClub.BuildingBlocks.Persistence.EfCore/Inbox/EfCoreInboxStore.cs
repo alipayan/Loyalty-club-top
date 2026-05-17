@@ -31,15 +31,37 @@ public sealed class EfCoreInboxStore<TDbContext>(TDbContext dbContext) : IInboxS
         return message;
     }
 
-    public Task MarkAsProcessedAsync(InboxMessage message, CancellationToken cancellationToken = default)
+    public Task MarkAsProcessedAsync(Guid eventId, string consumer, DateTimeOffset processedOn, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(message);
-
-        var existingMessage = InboxMessages.Find(message.Id);
+        var existingMessage = InboxMessages.Find(eventId);
         if (existingMessage is null)
             return Task.CompletedTask;
 
         existingMessage.ProcessedOn = DateTimeOffset.Now;
+        existingMessage.ProcessedOn = processedOn;
+        existingMessage.Status = InboxMessageStatus.Processed;
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> TryStartProcessingAsync(InboxMessage message, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+
+        message.Status = InboxMessageStatus.Processing;
+        message.RetryCount += 1;
+
+        return Task.FromResult(true);
+    }
+
+    public Task MarkAsFailedAsync(Guid eventId, string consumer, string error, DateTimeOffset failedOn, CancellationToken ct)
+    {
+        var existingMessage = InboxMessages.Find(eventId);
+        if (existingMessage is null)
+            return Task.CompletedTask;
+
+        existingMessage.LastError = error;
+        existingMessage.FailedOn = failedOn;
+        existingMessage.Status = InboxMessageStatus.Failed;
         return Task.CompletedTask;
     }
 }

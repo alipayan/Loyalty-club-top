@@ -8,10 +8,15 @@ public interface IOutboxStore
 
     Task<IReadOnlyList<OutboxMessage>> GetPublishableAsync(
         int batchSize,
+        DateTimeOffset now,
+        int maxRetryCount,
         CancellationToken cancellationToken = default);
 
     Task<bool> TryMarkAsProcessingAsync(
        Guid messageId,
+       DateTimeOffset startedOn,
+       DateTimeOffset expiresOn,
+       DateTimeOffset lastAttemptOn,
        CancellationToken cancellationToken = default);
 
     Task MarkAsPublishedAsync(

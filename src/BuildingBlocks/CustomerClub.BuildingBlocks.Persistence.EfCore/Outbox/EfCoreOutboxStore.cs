@@ -18,6 +18,8 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
 
     public async Task<IReadOnlyList<OutboxMessage>> GetPublishableAsync(
         int batchSize,
+        DateTimeOffset now,
+        int maxRetryCount,
         CancellationToken cancellationToken = default)
     {
         if (batchSize <= 0)
@@ -27,7 +29,9 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
             .AsNoTracking()
             .Where(message =>
                     message.Status == OutboxMessageStatus.Pending ||
-                    message.Status == OutboxMessageStatus.Failed
+                    message.Status == OutboxMessageStatus.Failed ||
+                   (message.Status == OutboxMessageStatus.Processing && message.ProcessingExpiresOn <= now) &&
+                    message.RetryCount < maxRetryCount
                 )
             .OrderBy(message => message.OccurredOn)
             .Take(batchSize)
@@ -36,6 +40,9 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
 
     public async Task<bool> TryMarkAsProcessingAsync(
         Guid messageId,
+        DateTimeOffset startedOn,
+        DateTimeOffset expiresOn,
+        DateTimeOffset lastAttemptOn,
         CancellationToken cancellationToken = default)
     {
         var affectedRows = await OutboxMessages
@@ -47,7 +54,9 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
                 ))
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(message => message.Status, OutboxMessageStatus.Processing)
-                .SetProperty(message => message.LastAttemptOn, DateTimeOffset.Now)
+                .SetProperty(message => message.LastAttemptOn, lastAttemptOn)
+                .SetProperty(message => message.ProcessingStartedOn, startedOn)
+                .SetProperty(message => message.ProcessingExpiresOn, expiresOn)
                 .SetProperty(message => message.RetryCount, message => message.RetryCount + 1),
                 cancellationToken);
 
@@ -84,13 +93,14 @@ public sealed class EfCoreOutboxStore<TDbContext>(TDbContext dbContext) : IOutbo
         if (message is null)
             return;
 
-        message.LastError = error;
-        message.LastAttemptOn = failedOn;
-
-        message.Status = message.RetryCount >= maxRetryCount
+        await OutboxMessages
+            .Where(message => message.Id == messageId)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(message => message.Status, message.RetryCount >= maxRetryCount
             ? OutboxMessageStatus.DeadLettered
-            : OutboxMessageStatus.Failed;
-
-        await dbContext.SaveChangesAsync(cancellationToken);
+            : OutboxMessageStatus.Failed)
+                .SetProperty(message => message.LastError, error)
+                .SetProperty(message => message.LastAttemptOn, failedOn),
+                cancellationToken);
     }
 }

@@ -16,9 +16,13 @@ public sealed class InboxMessage
 
     public int RetryCount { get; set; }
 
+    public InboxMessageStatus Status { get; set; }
+
     public string? LastError { get; set; }
 
     public DateTimeOffset ReceivedOn { get; set; }
 
     public DateTimeOffset ProcessedOn { get; set; }
+
+    public DateTimeOffset FailedOn { get; set; }
 }

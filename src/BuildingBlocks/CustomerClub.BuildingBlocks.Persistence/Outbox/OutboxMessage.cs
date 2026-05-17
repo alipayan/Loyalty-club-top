@@ -30,4 +30,8 @@ public sealed class OutboxMessage
 
     public OutboxMessageStatus Status { get; set; } = OutboxMessageStatus.Pending;
 
+    public DateTimeOffset? ProcessingStartedOn { get; set; }
+
+    public DateTimeOffset? ProcessingExpiresOn { get; set; }
+
 }

@@ -17,7 +17,14 @@ public sealed class SystemTextJsonEventSerializer : IEventSerializer
     public string Serialize<TPayload>(TPayload payload)
         => JsonSerializer.Serialize(payload, Options);
 
+    public string Serialize(object payload, Type payloadType)
+        => JsonSerializer.Serialize(payload, payloadType, Options);
+
     public TPayload Deserialize<TPayload>(string payload)
         => JsonSerializer.Deserialize<TPayload>(payload, Options)
-           ?? throw new Exception("Message payload could not be deserialized.");
+           ?? throw new InvalidOperationException("Message payload could not be deserialized.");
+
+    public object Deserialize(string payload, Type payloadType)
+        => JsonSerializer.Deserialize(payload, payloadType, Options)
+           ?? throw new InvalidOperationException("Message payload could not be deserialized.");
 }
